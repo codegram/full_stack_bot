@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css?family=VT323");
+
+.chat-box{
+  .application-logo{
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 7em;
+    width: 10em;
+    overflow: hidden;
+    z-index: 2500;
+    color: #fff;
+    text-indent: -999em;
+    background-image: url(./logo.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+    &:hover{
+      opacity: 1;
+    }
+
+    @media screen and (max-width: 800px) {
+      display: none;
+    }
+  }
+
+  ::selection {
+    background-color: #fff;
+    color: #080B0F;
+  }
+
+  padding: 0.5em;
+  cursor: default;
+  position: relative;
+
+  pre{
+    margin: 0;
+    padding: 0;
+  }
+
+  &, pre{
+    font-family: 'VT323';
+
+    @media screen and (max-width: 640px) {
+      font-size: 18px;
+    }
+
+    @media screen and (min-width: 640px) {
+      font-size: 22px;
+    }
+
+    @media screen and (min-width: 1024px) {
+      font-size: 26px;
+    }
+  }
+
+  .input-cursor {
+    &::before{
+      content: "_";
+    }
+
+    animation: blink steps(1) 500ms infinite;
+  }
+
+  .message-input{
+    position: absolute;
+    top: 0;
+    bottom: 99;
+    left: 99%;
+    right: 0;
+    opacity: 0;
+    z-index: 2000;
+    cursor: default;
+  }
+
+  ul{
+    margin: 0;
+    padding: 0;
+    opacity: 0.9;
+    position: relative;
+  }
+
+  li{
+    list-style-type: none;
+    color: #14B59D;
+    text-shadow: 0 0 15px #14B59D;
+    position: relative;
+
+    &, *{
+      word-break: break-all;
+    }
+
+    a{
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    .me{
+      padding-left: 0.6em;
+      &::before {
+        content: "you > ";
+      }
+    }
+
+    .system{
+      color: #fff;
+      text-shadow: 0 0 15px #fff;
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+
+    .bot{
+      color: #D2007B;
+      padding-left: 0.6em;
+      text-shadow: 0 0 15px #D2007B;
+
+      &::before {
+        content: "fsm > ";
+      }
+    }
+  }
+}

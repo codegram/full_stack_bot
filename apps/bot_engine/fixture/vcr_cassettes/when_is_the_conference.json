@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer 4b6f5bb6f2db4f4296176f8436a24514"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.api.ai/v1/query?lang=EN&query=when+is+the+conference+taking+place%3F"
+    },
+    "response": {
+      "body": "{\n  \"id\": \"aded7442-eb1a-4145-b62d-a83af0d696ed\",\n  \"timestamp\": \"2016-05-26T11:11:35.749Z\",\n  \"result\": {\n    \"source\": \"agent\",\n    \"resolvedQuery\": \"when is the conference taking place?\",\n    \"speech\": \"The conference is taking place in Barcelona on 5-9th September 2016.\",\n    \"action\": \"\",\n    \"parameters\": {},\n    \"metadata\": {\n      \"intentId\": \"663d922c-a6ff-46a9-af44-5f4101c58286\",\n      \"webhookUsed\": \"false\",\n      \"inputContexts\": [],\n      \"outputContexts\": [],\n      \"contexts\": [],\n      \"intentName\": \"when is the conference\"\n    },\n    \"score\": 1.0\n  },\n  \"status\": {\n    \"code\": 200,\n    \"errorType\": \"success\"\n  }\n}",
+      "headers": {
+        "Access-Control-Allow-Credentials": "true",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Date": "Thu, 26 May 2016 11:11:35 GMT",
+        "Server": "nginx/1.9.7",
+        "Set-Cookie": "AWSELB=5BC95B811CF70EAD3EDFA254D9A7311CD26C8652F576E48E66B31820AFBE305C2D1BD0F5152EA0204E204EAA686C35A3B71CA958E0E204B5224012705C37B0C3B395227C2B;PATH=/",
+        "Content-Length": "637",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

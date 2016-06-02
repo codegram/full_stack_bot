@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer 4b6f5bb6f2db4f4296176f8436a24514"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.api.ai/v1/query?lang=EN&query=where+does+the+conference+take+place%3F"
+    },
+    "response": {
+      "body": "{\n  \"id\": \"daed5760-89c1-4cba-815a-9903ab4427b7\",\n  \"timestamp\": \"2016-05-26T11:27:10.613Z\",\n  \"result\": {\n    \"source\": \"agent\",\n    \"resolvedQuery\": \"where does the conference take place?\",\n    \"speech\": \"The conference is taking place in Auditori Axa (Avinguda Diagonal 547, 08029, Barcelona), near the Illa Diagonal shopping centre. Here, check out the map: https://goo.gl/T6CqOD\",\n    \"action\": \"\",\n    \"parameters\": {},\n    \"metadata\": {\n      \"intentId\": \"181711d1-2bc1-4674-a7b7-b0a6a47177e6\",\n      \"webhookUsed\": \"false\",\n      \"inputContexts\": [],\n      \"outputContexts\": [],\n      \"contexts\": [],\n      \"intentName\": \"where is it\"\n    },\n    \"score\": 1.0\n  },\n  \"status\": {\n    \"code\": 200,\n    \"errorType\": \"success\"\n  }\n}",
+      "headers": {
+        "Access-Control-Allow-Credentials": "true",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Date": "Thu, 26 May 2016 11:27:10 GMT",
+        "Server": "nginx/1.8.0",
+        "Set-Cookie": "AWSELB=5BC95B811CF70EAD3EDFA254D9A7311CD26C8652F576E48E66B31820AFBE305C2D1BD0F5153B6D34EB39FF6495AD1B8CCE59B6727B6CE0B98F3BE8AF04A063FCFC3895A3D4;PATH=/",
+        "Content-Length": "735",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
