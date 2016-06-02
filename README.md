@@ -6,15 +6,15 @@ The engine behind Full Stack Fest's 2016 AI bot.
 
 ## Tech Stack
 
-* An `Elixir`'s' umbrella app containing two apps:
-  * The bot engine that talks to [api.ai](https://api.ai)
-  * A web interface leveraging phoenix
+* An [elixir](http://elixir-lang.org/) umbrella app containing two apps:
+  * The bot engine that talks to [api.ai](https://api.ai).
+  * A web interface leveraging [phoenix](http://www.phoenixframework.org/).
 
 The web interface uses:
 
-* `webpack` to bundle all the assets
-* `Babel` to cross-compile ES7
-* `react.js` for the view layer
-* `mobx` for state handling
+* [webpack](https://webpack.github.io/) to bundle all the assets.
+* [babel](https://babeljs.io/) to transpile ES7.
+* [react.js](https://facebook.github.io/react/) to render the views.
+* [mobx](https://github.com/mobxjs/mobx) for state handling.
 
 It can be easily deployed via docker as it includes a Dockerfile.
