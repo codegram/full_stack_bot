@@ -2,7 +2,7 @@
 
 The engine behind Full Stack Fest's 2016 AI bot.
 
-![Demo](http://www.giphy.com/gifs/3oD3YFS3Zz3msIOSyY)
+![Demo](http://i.giphy.com/l3UcebLyvjNFOAkBq.gif)
 
 ## Tech Stack
 
