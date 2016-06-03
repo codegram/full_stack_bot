@@ -2,8 +2,12 @@ web:
   build: .
   command: "mix phoenix.server"
   environment:
+    - MIX_ENV=dev
+    - NODE_ENV=development
     - API_AI_CLIENT_ACCESS_TOKEN=${API_AI_CLIENT_ACCESS_TOKEN}
     - SECRET_KEY_BASE=DevelopmentSecret
     - PORT=4000
   expose:
     - "4000"
+  volumes:
+    - ./code
