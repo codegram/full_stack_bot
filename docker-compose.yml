@@ -10,4 +10,4 @@ web:
   expose:
     - "4000"
   volumes:
-    - ./code
+    - .:/code
