@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="A companion AI for Full Stack Conference 2016">
+    <meta name="author" content="Full Stack Fest 2016">
     <link rel="icon" type="image/png" href="<%= static_path(@conn, "/assets/favicon.png") %>" />
-
+    <meta property="og:image" content="<%= static_path(@conn, "/assets/picture.jpg") %>" />
     <title>Full Stack Bot</title>
   </head>
 
