@@ -18,7 +18,7 @@ defmodule WebInterface.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
-      use Phoenix.ConnTest
+      use Phoenix.ConnTest, async: false
 
       import WebInterface.Router.Helpers
 

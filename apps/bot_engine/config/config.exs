@@ -28,5 +28,16 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 
+if Mix.env == :test do
+  config :exvcr, [
+    vcr_cassette_library_dir: "fixture/vcr_cassettes",
+    filter_sensitive_data: [
+      [pattern: "Bearer .*$", placeholder: "API_AI_CLIENT_TOKEN"]
+    ],
+    filter_url_params: false,
+    response_headers_blacklist: []
+  ]
+end
+
 config :bot_engine, BotEngine.ApiAi,
   client_access_token: System.get_env("API_AI_CLIENT_ACCESS_TOKEN")
