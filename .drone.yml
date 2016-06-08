@@ -11,7 +11,7 @@ build:
     - npm install
     - npm run compile
     - cd $DRONE_BUILD_DIR
-    - mix test
+    - mix test --color
 cache:
   mount:
     - apps/web_interface/node_modules
