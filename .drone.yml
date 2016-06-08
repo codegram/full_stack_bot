@@ -1,0 +1,21 @@
+build:
+  image: marcelocg/phoenix
+  environment:
+    - MIX_ENV=test
+    - NODE_ENV=test
+  commands:
+    - sudo apt-get install erlang-tools
+    - yes | mix deps.get
+    - yes | mix deps.compile
+    - cd apps/web_interface
+    - npm install
+    - npm run compile
+    - cd $DRONE_BUILD_DIR
+    - mix test
+cache:
+  mount:
+    - apps/web_interface/node_modules
+    - apps/web_interface/priv
+    - .git
+    - deps
+    - /root/.mix
