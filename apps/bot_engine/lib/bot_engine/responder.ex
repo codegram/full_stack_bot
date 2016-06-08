@@ -60,7 +60,7 @@ defmodule BotEngine.Responder do
   def dispatch(%Query{action: "talk", params: %{"talk-keyword" => keyword}}) do
     case lookup_talk(keyword) do
       nil ->
-        "I don't know that we have any talk about #{keyword}, but definitely double-check on the agenda: https://2016.fullstackfest.com/agenda"
+        "I can't recall any talk about #{keyword}, but definitely double-check on the agenda: https://2016.fullstackfest.com/agenda"
       talk -> describe_talk(talk)
     end
   end
@@ -68,11 +68,19 @@ defmodule BotEngine.Responder do
   def dispatch(_), do: wat
 
   defp lookup_talk(keyword) do
-    FullStackFest.get!("/speakers.json").body["speakers"] |>
+    candidates = FullStackFest.get!("/speakers.json").body["speakers"] |>
       Enum.reject(fn(speaker) -> String.contains?(speaker["talk"]["title"], "Master of Cerimonies") end) |>
-      Enum.find(fn(speaker) ->
-        similarity_score(String.downcase(speaker["talk"]["title"]), String.downcase(keyword)) >= 0.7
-      end)
+      Enum.map(fn(speaker) ->
+        {similarity_score(
+            String.downcase(speaker["talk"]["title"]),
+            String.downcase(speaker["talk"]["description"]),
+            String.downcase(keyword)), speaker}
+      end) |>
+      Enum.sort |>
+      Enum.reject(fn({score, _}) -> score < 0.7 end) |>
+      Enum.map(fn({_, speaker}) -> speaker end) |>
+      Enum.reverse
+    List.first(candidates)
   end
 
   defp lookup_speaker(name) do
@@ -83,9 +91,9 @@ defmodule BotEngine.Responder do
 
   defp describe_speaker(speaker) do
     speaker["tagline"] <>
-      "They're speaking about " <> speaker["talk"]["title"] <> ". " <>
-    (if speaker["twitter"], do: "You should follow them on twitter: " <> speaker["twitter"] <> "!", else: "") <>
-    (if speaker["interview"], do: "Also, their interview is worth a read: " <> speaker["interview"], else: "")
+      " They're speaking about " <> speaker["talk"]["title"] <> "." <>
+    (if speaker["twitter"], do: " You should follow them on twitter: " <> speaker["twitter"] <> "!", else: "") <>
+    (if speaker["interview"], do: " Also, their interview is worth a read: " <> speaker["interview"], else: "")
   end
 
   defp describe_talk(speaker) do
@@ -110,17 +118,35 @@ defmodule BotEngine.Responder do
     ])
   end
 
-  defp similarity_score(title, keyword) do
-    is_mc = String.contains?(title, "Master of Cerimonies")
-    title_words = String.split(title) |> Enum.count
-    words_contained = String.split(keyword) |> Enum.filter(fn(w) -> String.contains?(title, w) end) |> Enum.count
+  defp similarity_score(title, description, keyword) do
+    title_tokens = tokenize(title)
+    desc_tokens = tokenize(description)
+    keyword_tokens = tokenize(keyword)
 
-    weight = cond do
-      is_mc -> 0.0
-      words_contained >= 2 -> 1.2
-      true -> 1
-    end
+    title_freqs = Enum.map(keyword_tokens, fn(t) -> freq(t, title_tokens) end)
+    desc_freqs = Enum.map(keyword_tokens, fn(t) -> freq(t, desc_tokens) end)
 
-    weight * String.jaro_distance(keyword, title)
+    title_freqs_sum = Enum.sum(title_freqs)
+    desc_freqs_sum = Enum.sum(desc_freqs)
+
+    mc = (if String.contains?(title, "Master of Cerimonies"), do: 0, else: 1)
+    weight = (title_freqs_sum * 0.5) + 1
+    desc_weight = (desc_freqs_sum * 0.2) + 1
+
+    mc * weight * desc_weight * String.jaro_distance(keyword, title)
+  end
+
+  defp tokenize(string) do
+    string |>
+      String.replace(~r/[\.,!\?\(\)-]/, "") |>
+      String.replace("/", " ") |>
+      String.split |>
+      Enum.reject(fn(t) -> String.length(t) < 3 end)
+  end
+
+  defp freq(token, tokens) do
+    tokens |>
+      Enum.filter(fn(t) -> t == token end) |>
+      Enum.count
   end
 end

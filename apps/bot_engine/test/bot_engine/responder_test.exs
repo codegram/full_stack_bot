@@ -62,46 +62,31 @@ defmodule BotEngine.ResponderTest do
   end
 
   test "it describes talks" do
-    use_cassette "speakers" do
-      response = Responder.dispatch(%Query {
-            intent: "what's the talk about %",
-            action: "talk",
-            text: "what's the talk about Unison?",
-            params: %{
-              "talk-keyword" => "Unison"
-            }})
-
-      assert(response =~ "Unison: a new programming platform")
-      assert(response =~ "Paul Chiusano")
-      assert(response =~ "huge increases in productivity")
-    end
+    talk = describe_talk("Unison")
+    assert(talk =~ "Unison: a new programming platform")
+    assert(talk =~ "Paul Chiusano")
+    assert(talk =~ "huge increases in productivity")
   end
 
   test "it allows for slight misspellings" do
-    use_cassette "speakers" do
-      response = Responder.dispatch(%Query {
-            intent: "what's the talk about %",
-            action: "talk",
-            text: "what's the talk about server react programming",
-            params: %{
-              "talk-keyword" => "server react programming"
-            }})
-
-      assert(response =~ "Make Reactive Programming on the Server Great Again")
-    end
+    assert(describe_talk("server react programming") =~ "Make Reactive Programming on the Server Great Again")
+    assert(describe_talk("distributed performance") =~ "Ines Sombra")
+    assert(describe_talk("IPFS") =~ "Juan Benet")
   end
 
   test "it doesn't recognize unknown talks" do
+    assert(describe_talk("baking sourdough") =~ "I can't recall")
+  end
+
+  defp describe_talk(keyword) do
     use_cassette "speakers" do
-      response = Responder.dispatch(%Query {
+      Responder.dispatch(%Query {
             intent: "what's the talk about %",
             action: "talk",
-            text: "what's the talk about baking sourdough",
+            text: "what's the talk about #{keyword}",
             params: %{
-              "talk-keyword" => "baking sourdough"
+              "talk-keyword" => keyword
             }})
-
-      assert(response =~ "I don't know")
     end
   end
 end
