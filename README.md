@@ -1,4 +1,4 @@
-# Full Stack Bot
+# Full Stack Bot [![Build Status](http://ci.codegram.com/api/badges/codegram/full_stack_bot/status.svg)](http://ci.codegram.com/codegram/full_stack_bot)
 
 The engine behind Full Stack Fest's 2016 AI bot.
 
