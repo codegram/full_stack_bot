@@ -57,11 +57,27 @@ defmodule BotEngine.Responder do
     end
   end
 
+  def dispatch(%Query{action: "talk", params: %{"talk-keyword" => keyword}}) do
+    case lookup_talk(keyword) do
+      nil ->
+        "I don't know that we have any talk about #{keyword}, but definitely double-check on the agenda: https://2016.fullstackfest.com/agenda"
+      talk -> describe_talk(talk)
+    end
+  end
+
   def dispatch(_), do: wat
+
+  defp lookup_talk(keyword) do
+    FullStackFest.get!("/speakers.json").body["speakers"] |>
+      Enum.reject(fn(speaker) -> String.contains?(speaker["talk"]["title"], "Master of Cerimonies") end) |>
+      Enum.find(fn(speaker) ->
+        similarity_score(String.downcase(speaker["talk"]["title"]), String.downcase(keyword)) >= 0.7
+      end)
+  end
 
   defp lookup_speaker(name) do
     Enum.find(FullStackFest.get!("/speakers.json").body["speakers"], fn(speaker) ->
-      speaker["name"] == name
+      String.jaro_distance(name, speaker["name"]) >= 0.9
     end)
   end
 
@@ -70,6 +86,16 @@ defmodule BotEngine.Responder do
       "They're speaking about " <> speaker["talk"]["title"] <> ". " <>
     (if speaker["twitter"], do: "You should follow them on twitter: " <> speaker["twitter"] <> "!", else: "") <>
     (if speaker["interview"], do: "Also, their interview is worth a read: " <> speaker["interview"], else: "")
+  end
+
+  defp describe_talk(speaker) do
+    description = speaker["talk"]["description"]
+    speaker["name"] <> " is going to talk about " <> speaker["talk"]["title"] <> "." <>
+    (if String.length(description) != 0 do
+      " Here's the description of the talk: " <> description
+    else
+      ""
+    end)
   end
 
   defp wat do
@@ -82,5 +108,19 @@ defmodule BotEngine.Responder do
       "Uhm... #{name}? I'm afraid if you're not talking about that TV presenter from the mid-80s, I don't know who that is.",
       "The name rings a bell, but I don't think I've ever met #{name}, sorry."
     ])
+  end
+
+  defp similarity_score(title, keyword) do
+    is_mc = String.contains?(title, "Master of Cerimonies")
+    title_words = String.split(title) |> Enum.count
+    words_contained = String.split(keyword) |> Enum.filter(fn(w) -> String.contains?(title, w) end) |> Enum.count
+
+    weight = cond do
+      is_mc -> 0.0
+      words_contained >= 2 -> 1.2
+      true -> 1
+    end
+
+    weight * String.jaro_distance(keyword, title)
   end
 end
