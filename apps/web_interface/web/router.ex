@@ -18,8 +18,9 @@ defmodule WebInterface.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", WebInterface do
-  #   pipe_through :api
-  # end
+  scope "/webhook", WebInterface do
+    pipe_through :api
+
+    post "/", WebhookController, :recv
+  end
 end
