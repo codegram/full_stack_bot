@@ -14,6 +14,7 @@ defmodule BotEngine.ApiAi do
 
     response = HTTPoison.get!(resource_url("query"), headers, params: params)
     |> process_body
+    |> IO.inspect
     |> generate_response
 
     {:ok, response}
