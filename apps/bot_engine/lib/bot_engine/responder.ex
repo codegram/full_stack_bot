@@ -85,7 +85,7 @@ defmodule BotEngine.Responder do
 
   defp lookup_speaker(name) do
     Enum.find(FullStackFest.get!("/speakers.json").body["speakers"], fn(speaker) ->
-      String.jaro_distance(name, speaker["name"]) >= 0.9
+      String.jaro_distance(String.downcase(name), String.downcase(speaker["name"])) >= 0.9
     end)
   end
 

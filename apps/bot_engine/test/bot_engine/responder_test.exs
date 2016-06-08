@@ -11,54 +11,24 @@ defmodule BotEngine.ResponderTest do
   end
 
   test "it describes speakers" do
-    use_cassette "speakers" do
-      response = Responder.dispatch(%Query {
-            intent: "who is %",
-            action: "whois",
-            text: "Who is Joe Armstrong?",
-            params: %{
-              "given-name" => "Joe",
-              "last-name" => "Armstrong"
-            }})
-
-      assert(response =~ "Erlang language & platform co-creator")
-      assert(response =~ "Keynote")
-      assert(response =~ "twitter.com/joeerl")
-      assert(response =~ "interview is worth a read")
-    end
+    joe = describe_speaker("Joe Armstrong")
+    assert(joe =~ "Erlang language & platform co-creator")
+    assert(joe =~ "Keynote")
+    assert(joe =~ "twitter.com/joeerl")
+    assert(joe =~ "interview is worth a read")
   end
 
   test "it allows for slight misspellings in the speaker's name" do
-    use_cassette "speakers" do
-      response = Responder.dispatch(%Query {
-            intent: "who is %",
-            action: "whois",
-            text: "Who is Joel Armstong?",
-            params: %{
-              "given-name" => "Joel",
-              "last-name" => "Armstong"
-            }})
-
-      assert(response =~ "Erlang language & platform co-creator")
-      assert(response =~ "Keynote")
-      assert(response =~ "twitter.com/joeerl")
-      assert(response =~ "interview is worth a read")
-    end
+    joe = describe_speaker("joel amstong")
+    assert(joe =~ "Erlang language & platform co-creator")
+    assert(joe =~ "Keynote")
+    assert(joe =~ "twitter.com/joeerl")
+    assert(joe =~ "interview is worth a read")
   end
 
   test "it doesn't recognize unknown speakers" do
-    use_cassette "speakers" do
-      response = Responder.dispatch(%Query {
-            intent: "who is %",
-            action: "whois",
-            text: "Who is Mark Zuckerberg",
-            params: %{
-              "given-name" => "Mark",
-              "last-name" => "Zuckerberg"
-            }})
-
-      assert(response =~ "don't know" or response =~ "don't think")
-    end
+    unknown = describe_speaker("Mark Zuckerberg")
+    assert(unknown =~ "don't know" or unknown =~ "don't think")
   end
 
   test "it describes talks" do
@@ -86,6 +56,20 @@ defmodule BotEngine.ResponderTest do
             text: "what's the talk about #{keyword}",
             params: %{
               "talk-keyword" => keyword
+            }})
+    end
+  end
+
+  defp describe_speaker(name) do
+    [firstname, lastname] = String.split(name)
+    use_cassette "speakers" do
+      Responder.dispatch(%Query {
+            intent: "who is %",
+            action: "whois",
+            text: "who is #{name}",
+            params: %{
+              "given-name" => firstname,
+              "last-name" => lastname
             }})
     end
   end
