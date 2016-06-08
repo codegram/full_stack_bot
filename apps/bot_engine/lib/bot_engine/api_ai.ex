@@ -7,6 +7,7 @@ defmodule BotEngine.ApiAi do
   def query(session_id, message) do
     headers = %{"Authorization" =>  "Bearer #{config[:client_access_token]}"}
     params = %{
+      v: 20150910,
       query: message,
       lang: "EN",
       sessionId: session_id
@@ -27,18 +28,14 @@ defmodule BotEngine.ApiAi do
 
   defp process_body(%{body: body}), do: Poison.decode!(body)
 
-  defp generate_response(%{"result" => %{"speech" => ""}}),
-    do: default_response
-
-  defp generate_response(%{"result" => result}) do
+  defp generate_response(result = %{"result" => %{"fulfillment" => %{"speech" => message}}}) do
     %Response{
-      message: result["speech"] || "OK.",
+      message: message,
       action: result["action"],
       parameters: result["parameters"],
       metadata: result["metadata"]
     }
   end
 
-  defp generate_response(_), do: default_response
-  defp default_response, do: %Response{message: @default_reply}
+  defp generate_response(_), do: %Response{message: @default_reply}
 end
