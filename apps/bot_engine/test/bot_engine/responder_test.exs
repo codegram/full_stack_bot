@@ -15,7 +15,7 @@ defmodule BotEngine.ResponderTest do
     assert(joe =~ "Erlang language & platform co-creator")
     assert(joe =~ "Keynote")
     assert(joe =~ "twitter.com/joeerl")
-    assert(joe =~ "fullstackfest.com/speakers/#joe-armstrong")
+    assert(joe =~ "fullstackfest.com/speakers/joe-armstrong")
     assert(joe =~ "interview is worth a read")
   end
 

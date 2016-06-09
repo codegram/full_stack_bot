@@ -125,7 +125,7 @@ defmodule BotEngine.Responder do
   defp describe_speaker(speaker) do
     speaker["tagline"] <> " " <>
       speaker["name"] <> " will be speaking about " <> speaker["talk"]["title"] <> "." <>
-      " Read more about them at https://2016.fullstackfest.com/speakers/#" <> speaker["slug"] <> "." <>
+      " Read more about them at https://2016.fullstackfest.com/speakers/" <> speaker["slug"] <> "." <>
     (if speaker["twitter"], do: " Oh, and you should follow them on twitter at " <> speaker["twitter"] <> "!", else: "") <>
     (if speaker["interview"], do: " Their interview is worth a read as well: " <> speaker["interview"], else: "")
   end
