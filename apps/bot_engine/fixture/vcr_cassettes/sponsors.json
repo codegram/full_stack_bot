@@ -1,0 +1,32 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://2016.fullstackfest.com/sponsors.json"
+    },
+    "response": {
+      "body": "{\n  \"categories\": [\n        {\n            \"name\": \"hackerman\",\n            \"sponsors\": [\n            ]\n\n        }\n        ,\n        {\n            \"name\": \"black_hat\",\n            \"sponsors\": [\n                {\n                \"name\": \"Pusher\",\n                    \"description\": \"Hosted dev tools, API and libraries to add realtime, interactive features in minutes. Scales instantly & massively.\",\n                \"logo\": \"pusher.png\",\n                \"twitter\": \"pusher\",\n                \"website\": \"https://pusher.com\"\n                },\n                {\n                \"name\": \"Jobandtalent\",\n                    \"description\": \"Jobandtalent is the leading job marketplace for people to list and discover local jobs and talent online.\",\n                \"logo\": \"job_and_talent.png\",\n                \"twitter\": \"jobandtalenteng\",\n                \"website\": \"https://www.jobandtalent.com/\"\n                }\n            ]\n\n        }\n        ,\n        {\n            \"name\": \"grey_hat\",\n            \"sponsors\": [\n                {\n                \"name\": \"Xing\",\n                    \"description\": \"XING is the social network for business professionals. More than 11 million members worldwide use XING to boost their business, job, and career.\",\n                \"logo\": \"xing.png\",\n                \"twitter\": \"xing_bcn\",\n                \"website\": \"https://www.xing.com/\"\n                },\n                {\n                \"name\": \"Hitch\",\n                    \"description\": \"Building great developer communities is hard. Hitch is here to help you build the virtuous cycle of a healthy API ecosystem.\",\n                \"logo\": \"hitch.png\",\n                \"twitter\": \"hitchhq\",\n                \"website\": \"https://www.hitchhq.com/\"\n                }\n            ]\n\n        }\n        ,\n        {\n            \"name\": \"white_hat\",\n            \"sponsors\": [\n                {\n                \"name\": \"Drooms\",\n                \"logo\": \"drooms.png\",\n                \"twitter\": \"drooms_software\",\n                \"website\": \"https://www.drooms.com/\"\n                },\n                {\n                \"name\": \"Gemnasium\",\n                \"logo\": \"gemnasium.png\",\n                \"twitter\": \"gemnasiumapp\",\n                \"website\": \"https://gemnasium.com/\"\n                }\n            ]\n\n        }\n  ]\n}\n",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "2306",
+        "Connection": "keep-alive",
+        "Date": "Thu, 09 Jun 2016 10:35:47 GMT",
+        "Cache-Control": "max-age=31536000",
+        "x-amz-meta-content-md5": "90c567fe690b054be3970e36d4b31060",
+        "Last-Modified": "Thu, 09 Jun 2016 10:27:36 GMT",
+        "ETag": "\"90c567fe690b054be3970e36d4b31060\"",
+        "Server": "AmazonS3",
+        "Vary": "Accept-Encoding",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 eb1377e62e606e544123a131efe632b8.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Id": "zM-zt_EUlHN7ZldQ8z2NbtgLsWj9-ONk4uErC8KSLVfz-DQNAZhZaA=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

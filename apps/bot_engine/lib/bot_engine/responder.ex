@@ -46,7 +46,7 @@ defmodule BotEngine.Responder do
   end
 
   def dispatch(%Query{action: "sponsors"}) do
-    "There's a list of sponsors in the bottom of our page: https://2016.fullstackfest.com/"
+    list_sponsors
   end
 
   def dispatch(%Query{action: "whois", params: %{"full-name" => fullname}}) do
@@ -68,6 +68,20 @@ defmodule BotEngine.Responder do
   end
 
   def dispatch(_), do: wat
+
+  defp list_sponsors do
+    resp = FullStackFest.get!("/sponsors.json").body["categories"] |>
+      Enum.reject(fn(cat) -> Enum.count(cat["sponsors"]) == 0 end) |>
+      Enum.map(fn(cat) ->
+        formatted_sponsors = cat["sponsors"] |> Enum.map(fn(sponsor) ->
+          "#{sponsor["name"]} (#{sponsor["website"]})"
+        end) |> Enum.join(", ")
+        "Our " <> cat["name"] <> " sponsors are " <> formatted_sponsors <> "."
+      end) |>
+      Enum.join(" ")
+
+    resp <> ". We're very lucky to have them :)"
+  end
 
   defp lookup_talk(keyword) do
     candidates = FullStackFest.get!("/speakers.json").body["speakers"] |>
