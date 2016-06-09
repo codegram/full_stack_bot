@@ -13,7 +13,7 @@ defmodule TwitterBridge.Worker do
   end
 
   defp react_on(tweet = %ExTwitter.Model.Tweet{}) do
-    if mentioned?(tweet) && author(tweet) != @screen_name do
+    if mentioned?(tweet) && author(tweet) != @screen_name && !tweet.retweeted do
       respond_to(tweet)
     end
   end
