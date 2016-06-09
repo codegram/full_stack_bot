@@ -63,6 +63,18 @@ defmodule BotEngine.ResponderTest do
     assert(describe_talk("baking sourdough") =~ "I can't recall")
   end
 
+  test "it knows who speaks about a specific topic" do
+    use_cassette "speakers" do
+      response = Responder.dispatch(%Query {
+            intent: "Who speaks about X",
+            action: "whospeaksabout",
+            text: "who speaks about Unison?",
+            params: %{"talk-keyword" => "unison"}})
+
+      assert(response =~ "Paul Chiusano")
+    end
+  end
+
   test "it lists all our sponsors" do
     use_cassette "sponsors" do
       response = Responder.dispatch(%Query {

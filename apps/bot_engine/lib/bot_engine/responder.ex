@@ -58,6 +58,15 @@ defmodule BotEngine.Responder do
     end
   end
 
+  def dispatch(%Query{action: "whospeaksabout", params: %{"talk-keyword" => keyword}}) do
+    case lookup_talk(keyword) do
+      {:none, _} ->
+        "I can't recall any talk about #{keyword}, but definitely double-check on the agenda: https://2016.fullstackfest.com/agenda"
+      {:one, speaker} -> describe_speaker(speaker)
+      {:many, speakers} -> disambiguate(speakers, &(&1["talk"]["title"]))
+    end
+  end
+
   def dispatch(%Query{action: "talk", params: %{"talk-keyword" => keyword}}) do
     case lookup_talk(keyword) do
       {:none, _} ->
@@ -111,12 +120,11 @@ defmodule BotEngine.Responder do
                           "name" => name,
                           "slug" => slug,
                           "twitter" => twitter,
-                          "interview" => interview,
-                          "talk" => %{ "title" => talk_title }}) do
+                          "talk" => %{ "title" => talk_title }} = talk) do
     "#{name} (#{tagline}) will be speaking about #{talk_title}. " <>
       "Read more about them at https://2016.fullstackfest.com/speakers/#{slug} ." <>
     (if twitter, do: " Oh, and you should follow them on twitter at #{twitter} !", else: "") <>
-    (if interview, do: " Their interview is worth a read as well: #{interview}", else: "")
+    (if talk["interview"], do: " Their interview is worth a read as well: #{talk["interview"]}", else: "")
   end
 
   defp describe_talk(%{"name" => name,
