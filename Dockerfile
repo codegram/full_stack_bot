@@ -1,5 +1,8 @@
 FROM marcelocg/phoenix
 
+RUN sudo apt-get update
+RUN sudo apt-get install -y erlang
+
 ENV MIX_ENV prod
 ENV NODE_ENV production
 
