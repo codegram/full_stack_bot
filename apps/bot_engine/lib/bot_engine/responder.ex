@@ -102,7 +102,7 @@ defmodule BotEngine.Responder do
       end) |>
       Enum.join(" ")
 
-    resp <> ". We're very lucky to have them :)"
+    resp <> " We're very lucky to have them :)"
   end
 
   defp lookup_talk(query) do
