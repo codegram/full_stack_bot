@@ -1,5 +1,6 @@
 defmodule BotEngine.Responder do
   alias BotEngine.FullStackFest
+  alias BotEngine.Similarity
 
   defmodule Query do
     defstruct [:intent, :text, :action, :params]
@@ -53,17 +54,16 @@ defmodule BotEngine.Responder do
     case lookup_speaker(fullname) do
       {:none, _} -> i_dont_know(fullname)
       {:one, speaker} -> describe_speaker(speaker)
-      {:many, [speaker | speakers]} ->
-        all_speakers = Enum.join(Enum.map(speakers, &(&1["name"])), ", ") <> " or #{speaker["name"]}"
-        "Do you mean #{all_speakers}? Ask me again."
+      {:many, speakers} -> disambiguate(speakers, &(&1["name"]))
     end
   end
 
   def dispatch(%Query{action: "talk", params: %{"talk-keyword" => keyword}}) do
     case lookup_talk(keyword) do
-      nil ->
+      {:none, _} ->
         "I can't recall any talk about #{keyword}, but definitely double-check on the agenda: https://2016.fullstackfest.com/agenda"
-      talk -> describe_talk(talk)
+      {:one, speaker} -> describe_talk(speaker)
+      {:many, speakers} -> disambiguate(speakers, &(&1["talk"]["title"]))
     end
   end
 
@@ -71,73 +71,63 @@ defmodule BotEngine.Responder do
 
   defp list_sponsors do
     resp = FullStackFest.get!("/sponsors.json").body["categories"] |>
-      Enum.reject(fn(cat) -> Enum.count(cat["sponsors"]) == 0 end) |>
-      Enum.map(fn(cat) ->
-        formatted_sponsors = cat["sponsors"] |> Enum.map(fn(sponsor) ->
-          "#{sponsor["name"]} (#{sponsor["website"]})"
+      Enum.reject(&(Enum.empty?(&1["sponsors"]))) |>
+      Enum.map(fn(%{"sponsors" => sponsors, "name" => category_name}) ->
+        formatted_sponsors = sponsors |> Enum.map(fn(%{"name" => name, "website" => website}) ->
+          "#{name} (#{website})"
         end) |> Enum.join(", ")
-        "Our " <> cat["name"] <> " sponsors are " <> formatted_sponsors <> "."
+        "Our #{category_name} sponsors are #{formatted_sponsors}."
       end) |>
       Enum.join(" ")
 
     resp <> ". We're very lucky to have them :)"
   end
 
-  defp lookup_talk(keyword) do
-    candidates = FullStackFest.get!("/speakers.json").body["speakers"] |>
-      Enum.reject(fn(speaker) -> String.contains?(speaker["talk"]["title"], "Master of Cerimonies") end) |>
-      Enum.map(fn(speaker) ->
-        {similarity_score(
-            String.downcase(speaker["talk"]["title"]),
-            String.downcase(speaker["talk"]["description"]),
-            String.downcase(keyword)), speaker}
-      end) |>
-      Enum.sort |>
-      Enum.reject(fn({score, _}) -> score < 0.7 end) |>
-      Enum.map(fn({_, speaker}) -> speaker end) |>
-      Enum.reverse
-    List.first(candidates)
+  defp lookup_talk(query) do
+    speakers = FullStackFest.get!("/speakers.json").body["speakers"] |>
+      Enum.reject(fn(%{"talk" => %{"title" => title}}) -> String.contains?(title, "Master of Cerimonies") end)
+
+    Similarity.query(query, speakers,
+      fn(query, %{"talk" => %{"title" => title, "description" => description}}) ->
+        talk_similarity(query, title, description)
+      end,
+      %{min_confidence: 0.8,
+        max_distance_from_best: 0.2}
+    )
   end
 
   defp lookup_speaker(name) do
-    candidates = FullStackFest.get!("/speakers.json").body["speakers"] |>
-      Enum.map(fn(speaker) ->
-        {String.jaro_distance(String.downcase(name), String.downcase(speaker["name"])), speaker}
-      end) |>
-      Enum.sort |>
-      Enum.reject(fn({score, _}) -> score < 0.7 end) |>
-      Enum.reverse |>
-      Enum.reduce({0, []}, fn({score, speaker}, {max_score, acc}) ->
-        new_score = if score > max_score, do: score, else: max_score
-        new_acc = if (new_score - score) > 0.2, do: acc, else: [speaker | acc]
-        {new_score, new_acc}
-      end) |>
-      Tuple.to_list |>
-      List.last |>
-      Enum.reverse
-    case Enum.count(candidates) do
-      0 -> {:none, nil}
-      1 -> {:one, List.first(candidates)}
-      _ -> {:many, Enum.take(candidates, 3)}
-    end
+    speakers = FullStackFest.get!("/speakers.json").body["speakers"]
+    Similarity.query(name, speakers,
+      fn(name, %{"name" => speaker_name}) ->
+        String.jaro_distance(String.downcase(name), String.downcase(speaker_name))
+      end,
+      %{min_confidence: 0.7,
+        max_distance_from_best: 0.2}
+    )
   end
 
-  defp describe_speaker(speaker) do
-    speaker["tagline"] <> " " <>
-      speaker["name"] <> " will be speaking about " <> speaker["talk"]["title"] <> "." <>
-      " Read more about them at https://2016.fullstackfest.com/speakers/" <> speaker["slug"] <> "." <>
-    (if speaker["twitter"], do: " Oh, and you should follow them on twitter at " <> speaker["twitter"] <> "!", else: "") <>
-    (if speaker["interview"], do: " Their interview is worth a read as well: " <> speaker["interview"], else: "")
+  defp describe_speaker(%{"tagline" => tagline,
+                          "name" => name,
+                          "slug" => slug,
+                          "twitter" => twitter,
+                          "interview" => interview,
+                          "talk" => %{ "title" => talk_title }}) do
+    "#{name} (#{tagline}) will be speaking about #{talk_title}. " <>
+      "Read more about them at https://2016.fullstackfest.com/speakers/#{slug} ." <>
+    (if twitter, do: " Oh, and you should follow them on twitter at #{twitter} !", else: "") <>
+    (if interview, do: " Their interview is worth a read as well: #{interview}", else: "")
   end
 
-  defp describe_talk(speaker) do
-    description = speaker["talk"]["description"]
-    speaker["name"] <> " is going to talk about " <> speaker["talk"]["title"] <> "." <>
-    (if String.length(description) != 0 do
-      " Here's the description of the talk: " <> description
-    else
-      ""
-    end)
+  defp describe_talk(%{"name" => name,
+                       "talk" => %{"description" => description,
+                                   "title" => talk_title}}) do
+    "#{name} is going to talk about #{talk_title}." <>
+      (if String.length(description) != 0 do
+        " Here's the description of the talk: \"#{description}\"."
+      else
+        ""
+      end)
   end
 
   defp wat do
@@ -152,35 +142,22 @@ defmodule BotEngine.Responder do
     ])
   end
 
-  defp similarity_score(title, description, keyword) do
-    title_tokens = tokenize(title)
-    desc_tokens = tokenize(description)
-    keyword_tokens = tokenize(keyword)
-
-    title_freqs = Enum.map(keyword_tokens, fn(t) -> freq(t, title_tokens) end)
-    desc_freqs = Enum.map(keyword_tokens, fn(t) -> freq(t, desc_tokens) end)
-
-    title_freqs_sum = Enum.sum(title_freqs)
-    desc_freqs_sum = Enum.sum(desc_freqs)
-
-    mc = (if String.contains?(title, "Master of Cerimonies"), do: 0, else: 1)
-    weight = (title_freqs_sum * 0.5) + 1
-    desc_weight = (desc_freqs_sum * 0.2) + 1
-
-    mc * weight * desc_weight * String.jaro_distance(keyword, title)
+  defp disambiguate([value | values], show_function) do
+    alternatives = (values |>
+      Enum.map(&(show_function.(&1))) |>
+      Enum.join(", ")) <>
+      " or #{show_function.(value)}"
+    "Do you mean #{alternatives}? Ask me again."
   end
 
-  defp tokenize(string) do
-    string |>
-      String.replace(~r/[\.,!\?\(\)-]/, "") |>
-      String.replace("/", " ") |>
-      String.split |>
-      Enum.reject(fn(t) -> String.length(t) < 3 end)
-  end
+  defp talk_similarity(query, title, description) do
+    title_fsum = Similarity.Text.freq_sum(query, title)
+    desc_fsum = Similarity.Text.freq_sum(query, description)
+    title_distance = String.jaro_distance(String.downcase(query), String.downcase(title))
 
-  defp freq(token, tokens) do
-    tokens |>
-      Enum.filter(fn(t) -> t == token end) |>
-      Enum.count
+    title_weight = (title_fsum * 0.5) + 1
+    desc_weight = (desc_fsum * 0.2) + 1
+
+    title_weight * desc_weight * title_distance
   end
 end

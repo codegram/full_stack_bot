@@ -49,9 +49,13 @@ defmodule BotEngine.ResponderTest do
     assert(talk =~ "huge increases in productivity")
   end
 
+  test "it allows for ambiguous talk queries" do
+    assert(describe_talk("elm") =~ "Confident Frontend with Elm")
+  end
+
   test "it allows for slight misspellings" do
     assert(describe_talk("server react programming") =~ "Make Reactive Programming on the Server Great Again")
-    assert(describe_talk("distributed performance") =~ "Ines Sombra")
+    assert(describe_talk("performance") =~ "Ines Sombra")
     assert(describe_talk("IPFS") =~ "Juan Benet")
   end
 
