@@ -1,8 +1,8 @@
-defmodule BotEngine.Mixfile do
+defmodule TwitterBridge.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :bot_engine,
+    [app: :twitter_bridge,
      version: "0.0.1",
      build_path: "../../_build",
      config_path: "../../config/config.exs",
@@ -11,9 +11,6 @@ defmodule BotEngine.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     preferred_cli_env: [
-       vcr: :test, "vcr.delete": :test, "vcr.check": :test, "vcr.show": :test
-     ],
      deps: deps]
   end
 
@@ -21,8 +18,8 @@ defmodule BotEngine.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison],
-     mod: {BotEngine, []}]
+    [applications: [:logger, :extwitter],
+     mod: {TwitterBridge, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -39,8 +36,8 @@ defmodule BotEngine.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:httpoison, "~> 0.8.0"},
-     {:poison, "~> 1.5"},
-     {:exvcr, "~> 0.7", only: :test}]
+    [{:extwitter, "~> 0.6"},
+     {:oauth, github: "tim/erlang-oauth"},
+     {:bot_engine, in_umbrella: true}]
   end
 end
