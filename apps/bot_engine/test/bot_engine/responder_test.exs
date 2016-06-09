@@ -10,12 +10,18 @@ defmodule BotEngine.ResponderTest do
     BotEngine.FullStackFest.start
   end
 
-  test "it describes speakers" do
+  test "it describes speakers by full name" do
     joe = describe_speaker("Joe Armstrong")
     assert(joe =~ "Erlang language & platform co-creator")
     assert(joe =~ "Keynote")
     assert(joe =~ "twitter.com/joeerl")
+    assert(joe =~ "fullstackfest.com/speakers/#joe-armstrong")
     assert(joe =~ "interview is worth a read")
+  end
+
+  test "it describes speakers by first name only" do
+    joe = describe_speaker("simon")
+    assert(joe =~ "Leading Shopify's core architecture team")
   end
 
   test "it allows for slight misspellings in the speaker's name" do
@@ -24,6 +30,11 @@ defmodule BotEngine.ResponderTest do
     assert(joe =~ "Keynote")
     assert(joe =~ "twitter.com/joeerl")
     assert(joe =~ "interview is worth a read")
+  end
+
+  test "it allows for ambiguities matching several speakers" do
+    joe = describe_speaker("david")
+    assert(joe =~ "Do you mean David Simons or David Wells?")
   end
 
   test "it doesn't recognize unknown speakers" do
@@ -61,15 +72,13 @@ defmodule BotEngine.ResponderTest do
   end
 
   defp describe_speaker(name) do
-    [firstname, lastname] = String.split(name)
     use_cassette "speakers" do
       Responder.dispatch(%Query {
             intent: "who is %",
             action: "whois",
             text: "who is #{name}",
             params: %{
-              "given-name" => firstname,
-              "last-name" => lastname
+              "full-name" => name
             }})
     end
   end

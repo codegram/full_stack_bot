@@ -49,11 +49,13 @@ defmodule BotEngine.Responder do
     "There's a list of sponsors in the bottom of our page: https://2016.fullstackfest.com/"
   end
 
-  def dispatch(%Query{action: "whois", params: %{"given-name" => firstname, "last-name" => lastname}}) do
-    fullname = firstname <> " " <> lastname
+  def dispatch(%Query{action: "whois", params: %{"full-name" => fullname}}) do
     case lookup_speaker(fullname) do
-      nil -> i_dont_know(fullname)
-      speaker -> describe_speaker(speaker)
+      {:none, _} -> i_dont_know(fullname)
+      {:one, speaker} -> describe_speaker(speaker)
+      {:many, [speaker | speakers]} ->
+        all_speakers = Enum.join(Enum.map(speakers, &(&1["name"])), ", ") <> " or #{speaker["name"]}"
+        "Do you mean #{all_speakers}? Ask me again."
     end
   end
 
@@ -84,16 +86,34 @@ defmodule BotEngine.Responder do
   end
 
   defp lookup_speaker(name) do
-    Enum.find(FullStackFest.get!("/speakers.json").body["speakers"], fn(speaker) ->
-      String.jaro_distance(String.downcase(name), String.downcase(speaker["name"])) >= 0.9
-    end)
+    candidates = FullStackFest.get!("/speakers.json").body["speakers"] |>
+      Enum.map(fn(speaker) ->
+        {String.jaro_distance(String.downcase(name), String.downcase(speaker["name"])), speaker}
+      end) |>
+      Enum.sort |>
+      Enum.reject(fn({score, _}) -> score < 0.7 end) |>
+      Enum.reverse |>
+      Enum.reduce({0, []}, fn({score, speaker}, {max_score, acc}) ->
+        new_score = if score > max_score, do: score, else: max_score
+        new_acc = if (new_score - score) > 0.2, do: acc, else: [speaker | acc]
+        {new_score, new_acc}
+      end) |>
+      Tuple.to_list |>
+      List.last |>
+      Enum.reverse
+    case Enum.count(candidates) do
+      0 -> {:none, nil}
+      1 -> {:one, List.first(candidates)}
+      _ -> {:many, Enum.take(candidates, 3)}
+    end
   end
 
   defp describe_speaker(speaker) do
-    speaker["tagline"] <>
-      " They're speaking about " <> speaker["talk"]["title"] <> "." <>
-    (if speaker["twitter"], do: " You should follow them on twitter: " <> speaker["twitter"] <> "!", else: "") <>
-    (if speaker["interview"], do: " Also, their interview is worth a read: " <> speaker["interview"], else: "")
+    speaker["tagline"] <> " " <>
+      speaker["name"] <> " will be speaking about " <> speaker["talk"]["title"] <> "." <>
+      " Read more about them at https://2016.fullstackfest.com/speakers/#" <> speaker["slug"] <> "." <>
+    (if speaker["twitter"], do: " Oh, and you should follow them on twitter at " <> speaker["twitter"] <> "!", else: "") <>
+    (if speaker["interview"], do: " Their interview is worth a read as well: " <> speaker["interview"], else: "")
   end
 
   defp describe_talk(speaker) do
