@@ -65,6 +65,7 @@ defmodule BotEngine.ResponderTest do
 
   test "it knows who speaks about a specific topic" do
     assert(who_speaks_about("unison") =~ "Paul Chiusano")
+    assert(whats_x_talking_about("paul chiusano") =~ "Unison")
   end
 
   test "it lists all our sponsors" do
@@ -105,6 +106,16 @@ defmodule BotEngine.ResponderTest do
             action: "whospeaksabout",
             text: "who speaks about #{topic}?",
             params: %{"talk-keyword" => topic}})
+    end
+  end
+
+  defp whats_x_talking_about(name) do
+    use_cassette "speakers" do
+      Responder.dispatch(%Query {
+            intent: "What's x talking about",
+            action: "whatsxtalkingabout",
+            text: "what's #{name} talking about?",
+            params: %{"full-name" => name}})
     end
   end
 

@@ -67,6 +67,14 @@ defmodule BotEngine.Responder do
     end
   end
 
+  def dispatch(%Query{action: "whatsxtalkingabout", params: %{"full-name" => fullname}}) do
+    case lookup_speaker(fullname) do
+      {:none, _} -> i_dont_know(fullname)
+      {:one, speaker} -> describe_talk(speaker)
+      {:many, speakers} -> disambiguate(speakers, &(&1["name"]))
+    end
+  end
+
   def dispatch(%Query{action: "talk", params: %{"talk-keyword" => keyword}}) do
     case lookup_talk(keyword) do
       {:none, _} ->
