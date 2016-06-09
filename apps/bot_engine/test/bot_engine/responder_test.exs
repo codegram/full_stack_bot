@@ -71,7 +71,7 @@ defmodule BotEngine.ResponderTest do
   test "it lists all our sponsors" do
     sponsors = list_sponsors
     assert(sponsors =~ "Pusher")
-    assert(sponsors =~ "black_hat")
+    assert(sponsors =~ "Black Hat")
     assert(sponsors =~ "pusher.com")
   end
 

@@ -93,7 +93,12 @@ defmodule BotEngine.Responder do
         formatted_sponsors = sponsors |> Enum.map(fn(%{"name" => name, "website" => website}) ->
           "#{name} (#{website})"
         end) |> Enum.join(", ")
-        "Our #{category_name} sponsors are #{formatted_sponsors}."
+        formatted_category = category_name |>
+          String.split("_") |>
+          Enum.map(&String.capitalize/1) |>
+          Enum.join(" ")
+
+        "Our #{formatted_category} sponsors are #{formatted_sponsors}."
       end) |>
       Enum.join(" ")
 
