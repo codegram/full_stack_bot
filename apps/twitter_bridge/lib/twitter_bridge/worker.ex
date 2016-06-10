@@ -2,6 +2,8 @@ defmodule TwitterBridge.Worker do
   @screen_name "fullstackmaster"
   @max_length 120
 
+  alias TwitterBridge.MessageSplitter
+
   def start_link do
     Task.start_link(&watch/0)
   end
@@ -35,27 +37,9 @@ defmodule TwitterBridge.Worker do
   end
 
   defp respond(message, tweet) do
-    pack_strings(message)
-    |> IO.inspect
+    MessageSplitter.split(message)
     |> update_statuses(tweet)
   end
-
-  def pack_strings(message) do
-    message
-    |> String.split(" ")
-    |> create_messages(@max_length)
-  end
-
-  def create_messages([word | rest_words], max, messages = [message | rest_messages] \\ [""]) do
-    if String.length("#{message} #{word}") > max do
-      create_messages(rest_words, max, [word | [message | rest_messages]])
-    else
-      new_message = String.strip("#{message} #{word}")
-      create_messages(rest_words, max, [new_message | rest_messages])
-    end
-  end
-
-  def create_messages([], _, messages), do: Enum.reverse(messages)
 
   defp update_statuses(messages, tweet), do: update_statuses(messages, tweet, tweet.id)
 

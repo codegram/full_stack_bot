@@ -2,6 +2,7 @@
   "cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:rebar, :make], [{:cowlib, "~> 1.0.0", [hex: :cowlib, optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, optional: false]}]},
   "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [:make], []},
   "exactor": {:hex, :exactor, "2.2.0", "2a7418b82d974fe8276edd62c1facf4a9dc06339cdf11b5dcd10359e107fe5c3", [:mix], []},
+  "excheck": {:hex, :excheck, "0.3.3", "ce2353afc7616cb8e41e03246448a2ca3d31c1492366687927f4dfaba21c155b", [:mix], []},
   "exjsx": {:hex, :exjsx, "3.2.0", "7136cc739ace295fc74c378f33699e5145bead4fdc1b4799822d0287489136fb", [:mix], [{:jsx, "~> 2.6.2", [hex: :jsx, optional: false]}]},
   "extwitter": {:hex, :extwitter, "0.7.1", "35c18c3947e7fd15dce977b8b366846b411d8ff4e53c95201b6d22f8af12cdef", [:mix], [{:poison, "~> 1.5", [hex: :poison, optional: false]}]},
   "exvcr": {:hex, :exvcr, "0.7.4", "9e7b4cf5f91ecfabdac7a375610633b28288795503bdff0eb8763c275d367657", [:mix], [{:meck, "~> 0.8.3", [hex: :meck, optional: false]}, {:httpotion, "~> 2.1", [hex: :httpotion, optional: true]}, {:httpoison, "~> 0.8", [hex: :httpoison, optional: true]}, {:exjsx, "~> 3.2", [hex: :exjsx, optional: false]}, {:exactor, "~> 2.2", [hex: :exactor, optional: false]}]},
@@ -22,4 +23,5 @@
   "poison": {:hex, :poison, "1.5.2", "560bdfb7449e3ddd23a096929fb9fc2122f709bcc758b2d5d5a5c7d0ea848910", [:mix], []},
   "ranch": {:hex, :ranch, "1.2.1", "a6fb992c10f2187b46ffd17ce398ddf8a54f691b81768f9ef5f461ea7e28c762", [:make], []},
   "spex": {:hex, :spex, "0.1.2", "e44edc55b3de645078eb2b81273d50ff573b7b171b5f564ef0c5b0c99cf302b3", [:mix], []},
-  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.0", "edee20847c42e379bf91261db474ffbe373f8acb56e9079acb6038d4e0bf414f", [:rebar, :make], []}}
+  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.0", "edee20847c42e379bf91261db474ffbe373f8acb56e9079acb6038d4e0bf414f", [:rebar, :make], []},
+  "triq": {:git, "https://github.com/krestenkrab/triq.git", "c7306b8eaea133d52140cb828817efb5e50a3d52", []}}
