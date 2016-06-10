@@ -36,3 +36,5 @@ config :extwitter, :oauth, [
   access_token: System.get_env("TWITTER_ACCESS_TOKEN"),
   access_token_secret: System.get_env("TWITTER_ACCESS_TOKEN_SECRET")
 ]
+
+config :excheck, :number_iterations, 100

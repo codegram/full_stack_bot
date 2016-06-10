@@ -38,6 +38,8 @@ defmodule TwitterBridge.Mixfile do
   defp deps do
     [{:extwitter, "~> 0.6"},
      {:oauth, github: "tim/erlang-oauth"},
+     {:excheck, "~> 0.3", only: :test},
+     {:triq, github: "krestenkrab/triq", only: :test},
      {:bot_engine, in_umbrella: true}]
   end
 end
