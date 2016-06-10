@@ -1,6 +1,7 @@
 defmodule BotEngine.Responder do
   alias BotEngine.FullStackFest
   alias BotEngine.Similarity
+  alias BotEngine.Utils.Utils
 
   defmodule Query do
     defstruct [:intent, :text, :action, :params]
@@ -92,7 +93,7 @@ defmodule BotEngine.Responder do
       Enum.map(fn(%{"sponsors" => sponsors, "name" => category_name}) ->
         formatted_sponsors = sponsors |> Enum.map(fn(%{"name" => name, "website" => website}) ->
           "#{name} (#{website})"
-        end) |> Enum.join(", ")
+        end) |> Utils.to_sentence
         formatted_category = category_name |>
           String.split("_") |>
           Enum.map(&String.capitalize/1) |>
