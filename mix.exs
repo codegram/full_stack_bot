@@ -21,6 +21,9 @@ defmodule FullStackBot.Mixfile do
   # Dependencies listed here are available only for this project
   # and cannot be accessed from applications inside the apps folder
   defp deps do
-    [{:spex, "~> 0.1.0"}]
+    [
+      {:credo, "~>0.4", only: [:dev, :test]},
+      {:spex, "~> 0.1.0"}
+    ]
   end
 end

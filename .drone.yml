@@ -6,6 +6,7 @@ build:
   commands:
     - yes | mix deps.get
     - yes | mix deps.compile
+    - mix credo -a --strict
     - mix test --color
 cache:
   mount:
