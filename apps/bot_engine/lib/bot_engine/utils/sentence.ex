@@ -1,4 +1,4 @@
-defmodule BotEngine.Utils.Utils do
+defmodule BotEngine.Utils.Sentence do
 
   @moduledoc """
   A collection of functions that can be useful in the project but have no
@@ -23,13 +23,13 @@ defmodule BotEngine.Utils.Utils do
   See the examples for how it looks.
 
   ## Examples
-    iex> BotEngine.Utils.Utils.to_sentence([])
+    iex> BotEngine.Utils.Sentence.to_sentence([])
     ""
-    iex> BotEngine.Utils.Utils.to_sentence([1])
+    iex> BotEngine.Utils.Sentence.to_sentence([1])
     "1"
-    iex> BotEngine.Utils.Utils.to_sentence([1, 2])
+    iex> BotEngine.Utils.Sentence.to_sentence([1, 2])
     "1 and 2"
-    iex> BotEngine.Utils.Utils.to_sentence([1, 2, 3])
+    iex> BotEngine.Utils.Sentence.to_sentence([1, 2, 3])
     "1, 2, and 3"
   """
   def to_sentence(list, options \\ %{})
