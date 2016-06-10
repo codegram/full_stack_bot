@@ -20,6 +20,11 @@ defmodule TwitterBridge.Worker do
     end
   end
 
+  defp react_on({:follow, %{source: %{screen_name: screen_name}}}) do
+    message = "Thanks for following me. Feel free to ask me anything related to @fullstackfest."
+    ExTwitter.update("@#{screen_name} #{message}")
+  end
+
   defp react_on(_), do: nil
 
   defp mentioned?(%{entities: %{user_mentions: mentions}}) do

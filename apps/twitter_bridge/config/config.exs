@@ -27,7 +27,6 @@ use Mix.Config
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env}.exs"
 
 
 config :extwitter, :oauth, [
@@ -37,4 +36,4 @@ config :extwitter, :oauth, [
   access_token_secret: System.get_env("TWITTER_ACCESS_TOKEN_SECRET")
 ]
 
-config :excheck, :number_iterations, 100
+import_config "#{Mix.env}.exs"
