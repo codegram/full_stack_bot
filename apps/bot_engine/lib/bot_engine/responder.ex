@@ -110,11 +110,11 @@ defmodule BotEngine.Responder do
       Enum.reject(fn(%{"talk" => %{"title" => title}}) -> String.contains?(title, "Master of Cerimonies") end)
 
     Similarity.query(query, speakers,
-      fn(query, %{"talk" => %{"title" => title, "description" => description}}) ->
-        talk_similarity(query, title, description)
+      fn(query, %{"talk" => %{"title" => title, "description" => description, "keywords" => keywords}}) ->
+        talk_similarity(query, title, description, keywords)
       end,
-      %{min_confidence: 0.8,
-        max_distance_from_best: 0.2}
+      %{min_confidence: 0.5,
+        max_distance_from_best: 0.1}
     )
   end
 
@@ -171,14 +171,12 @@ defmodule BotEngine.Responder do
     "Do you mean #{alternatives}? Ask me again."
   end
 
-  defp talk_similarity(query, title, description) do
-    title_fsum = Similarity.Text.freq_sum(query, title)
-    desc_fsum = Similarity.Text.freq_sum(query, description)
+  defp talk_similarity(query, title, description, keywords) do
     title_distance = String.jaro_distance(String.downcase(query), String.downcase(title))
+    title_fsum = 1 - ( 1 / (1 + (Similarity.Text.freq_sum(query, title) * 2)))
+    desc_fsum = 1 - ( 1 / (1 + (Similarity.Text.freq_sum(query, description))))
+    keywords_fsum = 1 - (1 / (1 + Similarity.Text.freq_sum(query, keywords) * 5))
 
-    title_weight = (title_fsum * 0.5) + 1
-    desc_weight = (desc_fsum * 0.2) + 1
-
-    title_weight * desc_weight * title_distance
+    title_fsum * 0.5 + title_distance * 0.2 + desc_fsum * 0.3 + keywords_fsum
   end
 end
