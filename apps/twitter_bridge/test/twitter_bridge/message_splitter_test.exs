@@ -9,7 +9,7 @@ defmodule TwitterBridge.MessageSplitterTest do
     for_all x in message do
       messages = MessageSplitter.split(x, 140)
 
-      Enum.all?(messages, fn (elem) -> String.length(elem) <= 140 end)
+      Enum.all?(messages, fn (element) -> String.length(element) <= 140 end)
     end
   end
 
