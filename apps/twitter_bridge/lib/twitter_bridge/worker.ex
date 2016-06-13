@@ -34,7 +34,7 @@ defmodule TwitterBridge.Worker do
 
   defp mentioned?(_), do: false
 
-  defp author(%{user: %{screen_name: author}}), do: author
+  defp author(%{user: %{screen_name: author_name}}), do: author_name
 
   defp respond_to(tweet = %{text: text, id: id}) do
     {:ok, %{message: message}} = BotEngine.Bot.query(author(tweet), String.replace(text, "@#{@screen_name}", ""))
