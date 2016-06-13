@@ -29,6 +29,7 @@ export default class {
 
     channel.join()
       .receive("ok", () => this.connected = true)
+      .receive("ok", () => this.sendInitialMessage())
       .receive("error", resp => { console.log("Unable to join", resp); });
 
     channel.on("message", (message) => this.addMessage(message) );
@@ -43,6 +44,11 @@ export default class {
 
   addMessage(message) {
     this.messages.push(new Message(message));
+  }
+
+  sendInitialMessage() {
+    let message = new Message({ author: "me", body: "/start"});
+    this.channel.push("message", message);
   }
 
   @computed get messageCount() {

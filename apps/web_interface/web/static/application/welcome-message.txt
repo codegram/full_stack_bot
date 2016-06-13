@@ -1,5 +1,6 @@
- -----------------------------------------------------------------
-| WELCOME TO FULL STACK TERMINAL (https://2016.fullstackfest.com) |
-| Connection with FMaster established. Waiting for user input...  |
- -----------------------------------------------------------------
+ ------------------------------------------------
+| WELCOME TO FULL STACK Q&A                      |
+| Connection with Full Stack Master established. |
+| Waiting for user request...                    |
+ ------------------------------------------------
 
